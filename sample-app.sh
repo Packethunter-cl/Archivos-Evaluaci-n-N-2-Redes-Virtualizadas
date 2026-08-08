@@ -20,10 +20,14 @@ EOF
 
 cd tempdir
 
-docker build --no-cache -t sampleapp .
+echo "========== DOCKERFILE =========="
+cat Dockerfile
+echo "================================"
+
+docker build -t sampleapp .
 
 docker rm -f samplerunning 2>/dev/null || true
 
-docker run -d -p 8888:8080 --name samplerunning sampleapp
+docker run -t -d -p 8888:8080 --name samplerunning sampleapp
 
 docker ps -a
