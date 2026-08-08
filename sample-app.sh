@@ -27,15 +27,17 @@ cd tempdir
 # Construir imagen
 docker build --no-cache -t sampleapp .
 
-# Ejecutar contenedor
+# Ejecutar contenedor (AQUÍ ESTÁ EL SALVAVIDAS AL FINAL)
 docker run -t -d \
   -p 8888:8080 \
   --security-opt seccomp=unconfined \
   --name samplerunning \
-  sampleapp
+  sampleapp \
+  python /home/myapp/sample_app.py
 
 # Mostrar estado
 docker ps -a
 
 cd ..
-rm -rf tempdir 
+rm -rf tempdir
+ 
