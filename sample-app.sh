@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 rm -rf tempdir
 mkdir -p tempdir/templates
@@ -9,19 +8,13 @@ cp sample_app.py tempdir/.
 cp -r templates/* tempdir/templates/.
 cp -r static/* tempdir/static/.
 
-cat > tempdir/Dockerfile <<'EOF'
-FROM python:3.10
-
-RUN pip install --progress-bar off flask
-
-COPY ./static /home/myapp/static/
-COPY ./templates /home/myapp/templates/
-COPY sample_app.py /home/myapp/
-
-EXPOSE 8080
-
-CMD ["python", "/home/myapp/sample_app.py"]
-EOF
+echo "FROM python:3.10" > tempdir/Dockerfile
+echo "RUN pip install --progress-bar off flask" >> tempdir/Dockerfile
+echo "COPY ./static /home/myapp/static/" >> tempdir/Dockerfile
+echo "COPY ./templates /home/myapp/templates/" >> tempdir/Dockerfile
+echo "COPY sample_app.py /home/myapp/" >> tempdir/Dockerfile
+echo "EXPOSE 8080" >> tempdir/Dockerfile
+echo 'CMD ["python", "/home/myapp/sample_app.py"]' >> tempdir/Dockerfile
 
 cd tempdir
 
@@ -29,14 +22,10 @@ echo "========== DOCKERFILE =========="
 cat Dockerfile
 echo "================================"
 
-docker build -t sampleapp .
+docker build --no-cache -t sampleapp .
 
 docker rm -f samplerunning 2>/dev/null || true
 
-docker run -t -d \
-    -p 8888:8080 \
-    --name samplerunning \
-    sampleapp \
-    python /home/myapp/sample_app.py
+docker run -t -d -p 8888:8080 --name samplerunning sampleapp python /home/myapp/sample_app.py
 
 docker ps -a
