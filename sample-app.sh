@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 rm -rf tempdir
 mkdir -p tempdir/templates
@@ -10,11 +11,15 @@ cp -r static/* tempdir/static/.
 
 cat > tempdir/Dockerfile <<'EOF'
 FROM python:3.10
+
 RUN pip install --progress-bar off flask
+
 COPY ./static /home/myapp/static/
 COPY ./templates /home/myapp/templates/
 COPY sample_app.py /home/myapp/
+
 EXPOSE 8080
+
 CMD ["python", "/home/myapp/sample_app.py"]
 EOF
 
@@ -28,6 +33,10 @@ docker build -t sampleapp .
 
 docker rm -f samplerunning 2>/dev/null || true
 
-docker run -t -d -p 8888:8080 --name samplerunning sampleapp
+docker run -t -d \
+    -p 8888:8080 \
+    --name samplerunning \
+    sampleapp \
+    python /home/myapp/sample_app.py
 
 docker ps -a
